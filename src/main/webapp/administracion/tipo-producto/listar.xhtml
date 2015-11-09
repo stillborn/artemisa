@@ -1,0 +1,63 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/layout/template.xhtml">
+                    
+    <ui:define name="content">
+        <div class="Container100">
+            <div class="ContainerIndent">
+                <div class="Card ShadowEffect  ">
+                    <div class="Container100">
+                        <div class="ContainerIndent">
+                            <h2 class="TexAlCenter BigTopic">Tipo de Productos</h2>
+                                
+                            <h:form id="form"> 
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />   
+                                <p:growl id="msgs" showDetail="#{tipoProductoController.detail}"/>
+                                    
+                                <p:commandButton  value="Crear"
+                                                  icon="fa fa-plus Fs16 white" update=":createTipoProductoForm:createTipoProductoDialog"
+                                                  oncomplete="PF('createTipoProductoDialogWidget').show()" >
+                                </p:commandButton>
+                                    
+                                <p:separator />
+                                    
+                                <p:dataTable id="tipoProductosDT" var="m" value="#{tipoProductoController.list}" paginatorPosition="bottom"
+                                             rows="5" paginator="true" 
+                                             rowsPerPageTemplate="5,10,15" emptyMessage="Sin resultados" reflow="true">
+                                    <p:column headerText="Nombre" filterBy="#{m.nombre}" filterMatchMode="contains">
+                                        <p:cellEditor>
+                                            <f:facet name="output">
+                                                <h:outputText value="#{m.nombre}"/>
+                                            </f:facet>
+                                            <f:facet name="input">
+                                                <p:inputText value="#{m.nombre}" style="width: 90%"/>
+                                            </f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column headerText="Acciones" width="100">
+                                        <p:commandButton  label="Editar"
+                                                          icon="fa fa-edit Fs16 white" update=":updateTipoProductoForm:updateTipoProductoDialog"
+                                                          oncomplete="PF('updateTipoProductoDialogWidget').show()" >
+                                            <f:setPropertyActionListener value="#{m}" target="#{tipoProductoController.selected}" />
+                                        </p:commandButton>
+                                        <p:commandButton icon="fa fa-remove Fs16 white" alt="Eliminar" actionListener="#{tipoProductoController.delete(m)}"
+                                                         update=":#{p:component('tipoProductosDT')},:form:msgs">
+                                            <p:confirm header="Confirmar" message="Esta seguro de eliminar el registro?" icon="ui-icon-alert" />
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:form>
+                                
+                            <ui:include src="crear.xhtml"/>
+                            <ui:include src="editar.xhtml"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+        
+</ui:composition>

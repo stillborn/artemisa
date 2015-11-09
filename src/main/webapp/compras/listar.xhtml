@@ -1,0 +1,73 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/layout/template.xhtml">
+                    
+    <ui:define name="content">
+        <div class="Container100">
+            <div class="ContainerIndent">
+                <div class="Card ShadowEffect  ">
+                    <div class="Container100">
+                        <div class="ContainerIndent">
+                            <h2 class="TexAlCenter BigTopic">Compras</h2>
+                                
+                            <h:form id="form">  
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />   
+                                <p:growl id="msgs" showDetail="#{compraController.detail}"/>
+                                    
+                                   <p:commandButton  value="Crear"
+                                                  icon="fa fa-plus Fs16 white" update=":createCompraForm:createCompraDialog"
+                                                  oncomplete="PF('createCompraDialogWidget').show()" >
+                                </p:commandButton>
+                                    
+                                    
+                                <p:separator />
+                                    
+                                <p:dataTable id="comprasDT" var="m" value="#{compraController.list}" paginatorPosition="bottom"
+                                             rows="5" paginator="true" 
+                                             rowsPerPageTemplate="5,10,15" emptyMessage="Sin resultados" reflow="true">
+                                                 
+                                    <p:column headerText="Fecha" filterBy="#{m.fechaCompra}" filterMatchMode="contains" width="120"
+                                              sortBy="#{m.fechaVenta}">
+                                        <h:outputText value="#{m.fechaCompra}"/>
+                                    </p:column>
+                                    <p:column headerText="Número de Factura" width="200" filterBy="#{m.numeroFactura}" filterMatchMode="contains">
+                                        <h:outputText value="#{m.numeroFactura}"/>
+                                    </p:column>
+                                    <p:column headerText="Proveedor">
+                                        <h:outputText value="#{m.proveedor.nombre}"/>
+                                    </p:column>
+                                    <p:column headerText="Total Compra">
+                                        <h:outputText value="#{compraController.getCompraTotal(m.id)}">
+                                            <f:convertNumber currencySymbol="$" groupingUsed="true"
+                                                maxFractionDigits="2" type="currency" currencyCode="COP"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column width="35">
+                                        <p:commandButton id="optionsButton" type="button" icon="fa fa-gear Fs16 white"/>
+                                        <p:menu overlay="true" trigger="optionsButton" my="left top" at="left bottom">
+                                            <p:menuitem icon="fa fa-edit Fs16 white" outcome="/compras/editar" value="Editar">
+                                                <f:param value="#{m.id}" name="compraId" />
+                                            </p:menuitem>
+                                            <p:menuitem icon="fa fa-remove Fs16 white" title="Eliminar" actionListener="#{compraController.delete(m)}"
+                                                         update=":form:comprasDT,:form:msgs" value="Eliminar"> 
+                                                <p:confirm header="Confirmar" message="Esta seguro de eliminar el registro?" icon="ui-icon-alert" />
+                                            </p:menuitem>
+                                        </p:menu>
+                                    </p:column> 
+                                    
+                                </p:dataTable>                                                                                                
+                            </h:form>    
+                            
+                            <ui:include src="crear.xhtml"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+        
+</ui:composition>

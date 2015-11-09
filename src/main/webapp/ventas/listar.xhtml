@@ -1,0 +1,109 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/layout/template.xhtml">
+                    
+    <ui:define name="content">
+        <div class="Container100">
+            <div class="ContainerIndent">
+                <div class="Card ShadowEffect  ">
+                    <div class="Container100">
+                        <div class="ContainerIndent">
+                            <h2 class="TexAlCenter BigTopic">Ventas</h2>
+                                
+                            <h:form id="form">      
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                                
+                                <p:growl id="msgs" showDetail="#{ventaController.detail}"/>
+                                    
+                                <p:panelGrid>
+                                    <p:row>
+                                        <p:column>
+                                            <p:outputLabel for="fecha" value="Fecha"/>
+                                            <p:calendar id="fecha" pattern="yyyy-MM-dd" value="#{ventaController.newVenta.fechaVenta}" required="true"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:outputLabel for="producto" value="Producto"/>
+                                            <p:selectOneMenu
+                                                value="#{ventaController.newVenta.producto}" effect="fade"
+                                                converter="ProductoConverter" required="true" id="producto"
+                                                requiredMessage="La venta debe tener un producto" var="t"
+                                                style="width:151px" filter="true" filterMatchMode="contains">                                       
+                                                <p:ajax listener="#{ventaController.setVentaPrecio()}" update="precio,:form:msgs" />
+                                                <f:selectItems value="#{productoController.list}" var="m"
+                                                               itemLabel="#{m.codigo}" itemValue="#{m}" />
+                                                                   
+                                                <p:column headerText="Marca">
+                                                    <h:outputText value="#{t.marca.nombre}"/>
+                                                </p:column>
+                                                <p:column headerText="Descripción">
+                                                    <h:outputText value="#{t.descripcion}"/>
+                                                </p:column>
+                                                <p:column headerText="Presentación">
+                                                    <h:outputText value="#{t.presentacion.descripcion}"/>
+                                                </p:column>
+                                                <p:column headerText="Tipo Producto">
+                                                    <h:outputText value="#{t.tipoProducto.nombre}"/>
+                                                </p:column>
+                                            </p:selectOneMenu>
+                                        </p:column>
+                                        <p:column>
+                                            <p:outputLabel for="cantidad" value="Cantidad"/>
+                                            <pe:inputNumber id="cantidad" value="#{ventaController.newVenta.cantidad}" 
+                                                            style="width: 20px;"    required="true"/>
+                                        </p:column>
+                                        <p:column>
+                                            
+                                            <p:outputLabel for="precio" value="Precio"/>
+                                            <pe:inputNumber id="precio" value="#{ventaController.newVenta.precio}" required="true"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:commandButton title="Guardar" icon="fa fa-dollar Fs16 white" update="msgs,cantidad, precio, producto, fecha, :formVentas:ventasDT"
+                                                             actionListener="#{ventaController.create()}"/>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                            </h:form>
+                            <p:separator />
+                            <h:form id="formVentas">
+                                
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />   
+                                <p:dataTable id="ventasDT" var="m" value="#{ventaController.list}" paginatorPosition="bottom"
+                                             rows="5" paginator="true" 
+                                             rowsPerPageTemplate="5,10,15" emptyMessage="Sin resultados" reflow="true">
+                                                 
+                                    <p:column headerText="Fecha" filterBy="#{m.fechaVenta}" filterMatchMode="contains" width="120"
+                                              sortBy="#{m.fechaVenta}">
+                                        <h:outputText value="#{m.fechaVenta}"/>
+                                    </p:column>
+                                    <p:column headerText="Producto">
+                                        <h:outputText value="#{m.producto.codigo}"/>
+                                    </p:column>
+                                    <p:column headerText="Cantidad" width="50">
+                                        <h:outputText value="#{m.cantidad}"/>
+                                    </p:column>
+                                    <p:column headerText="Precio" filterMatchMode="contains" width="50">
+                                        <h:outputText value="$#{m.precio}"/>                                    
+                                    </p:column>  
+                                    <p:column headerText="Total" width="50">
+                                        <h:outputText value="$#{m.precio * m.cantidad}"/>                                    
+                                    </p:column>  
+                                    <p:column width="35">
+                                        <p:commandButton icon="fa fa-remove Fs16 white" title="Eliminar" actionListener="#{ventaController.delete(m)}"
+                                                         update=":formVentas:ventasDT,:form:msgs" process="ventasDT">
+                                            <p:confirm header="Confirmar" message="Esta seguro de eliminar el registro?" icon="ui-icon-alert" />
+                                        </p:commandButton>
+                                    </p:column>    
+                                </p:dataTable>                                                                                                
+                            </h:form>                                
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+        
+</ui:composition>

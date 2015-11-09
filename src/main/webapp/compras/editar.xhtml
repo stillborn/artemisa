@@ -1,0 +1,290 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+    template="/layout/template.xhtml">
+        
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{compraController.setSelectedCompra()}"/>
+    </f:metadata>
+    <ui:define name="content">       
+        <div class="Container100">
+            <div class="ContainerIndent">
+                <div class="Card ShadowEffect  ">
+                    <div class="Container100">
+                        <div class="ContainerIndent">
+                            <h:form id="formEditarCompra">    
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />   
+                                <p:growl id="msgs" showDetail="#{compraController.detail}"/>
+                                    
+                                <p:panelGrid>
+                                    <p:row>
+                                        <p:column>
+                                            <p:outputLabel value="Fecha Compra"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:calendar value="#{compraController.selected.fechaCompra}" pattern="yyyy-MM-dd"
+                                                        id="fechaFactura"/>
+                                        </p:column>
+                                        
+                                        <p:column>
+                                            <p:outputLabel value="Número Factura"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText value="#{compraController.selected.numeroFactura}" id="noFactura"/>
+                                        </p:column>
+                                        
+                                        <p:column>
+                                            <p:outputLabel value="Proveedor"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:selectOneMenu
+                                                value="#{compraController.selected.proveedor}" effect="fade"
+                                                converter="ProveedorConverter" required="true" id="proveedor"
+                                                requiredMessage="La compra debe tener un proveedor"
+                                                style="width:200px" filter="true" filterMatchMode="contains">                       
+                                                <f:selectItems value="#{proveedorController.list}" var="m"
+                                                               itemLabel="#{m.nombre}" itemValue="#{m}" />
+                                            </p:selectOneMenu>
+                                        </p:column>
+                                        <p:column>
+                                            <p:commandButton icon="fa fa-save Fs16 white" actionListener="#{compraController.update()}" title="Actualizar"
+                                                             update=":formEditarCompra:msgs, :#{p:component('panelTotals')}" 
+                                                             process="@this, iva, proveedor, fechaFactura, noFactura "/>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                                <p:separator />
+                                <p:tabView>
+                                    <p:tab title="Productos">
+                                        <p:panelGrid id="nuevoProducto">                                            
+                                            <p:row>
+                                                <p:column>
+                                                    <p:outputLabel value="Producto:" for="producto" />                                                    
+                                                </p:column>
+                                                <p:column>
+                                                    <p:selectOneMenu
+                                                        value="#{compraDetalleController.newCompraDetalle.producto}" effect="fade"
+                                                        converter="ProductoConverter" required="true" id="producto"  
+                                                        requiredMessage="Debe tener un producto" style="width: 150px;"
+                                                        filter="true" filterMatchMode="contains"> 
+                                                        <f:selectItem noSelectionOption="true" itemLabel="Seleccione..." />
+                                                        <f:selectItems value="#{productoController.list}" 
+                                                                       var="p" itemLabel="#{p.codigo}" itemValue="#{p}" />
+                                                    </p:selectOneMenu>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:outputLabel value="Cantidad:" for="cantidad"/>
+                                                </p:column>
+                                                <p:column>                                                    
+                                                    <pe:inputNumber value="#{compraDetalleController.newCompraDetalle.cantidad}" 
+                                                                    styleClass="inputSmall"
+                                                                    required="true" id="cantidad"/>                                       
+                                                </p:column>
+                                                
+                                                <p:column>
+                                                    <p:outputLabel value="Precio:" for="precio"/>
+                                                    <pe:inputNumber value="#{compraDetalleController.newCompraDetalle.precio}" 
+                                                                     styleClass="inputSmall"
+                                                                     required="true" id="precio"/>                                                                                                                                              
+                                                </p:column>
+                                                <p:column>
+                                                    <p:outputLabel value="Precio Total:" for="precioTotal"/>
+                                                    <pe:inputNumber value="#{compraDetalleController.precioTotal}" 
+                                                                     styleClass="inputSmall"
+                                                                     required="true" id="precioTotal"/>     
+                                                    <p:tooltip  for="precioTotal"
+                                                                value="Se debe ingresar este valor solo, cuando no se tiene el valor unitario.
+                                                                El sistema automaticamente calculara el valor unitario." 
+                                                                trackMouse="true" />
+                                                </p:column>
+                                                <p:column>
+                                                    <p:outputLabel value="Bonif.:" for="precio"/>                                          
+                                                </p:column>
+                                                <p:column>
+                                                    <p:selectBooleanCheckbox value="#{compraDetalleController.newCompraDetalle.bonificado}"
+                                                                             id="bonificado"/>                                           
+                                                </p:column>
+                                                
+                                                <p:column>
+                                                    <p:commandButton icon="fa fa-plus Fs16 white" title="Agregar"                                                                     
+                                                                    update=":#{p:component('productosDT')},:formEditarCompra:msgs,:#{p:component('panelTotals')}
+                                                                                ,:#{p:component('panelCantidad')}, :#{p:component('nuevoProducto')}"
+                                                                    process="@this, precio, precioTotal, cantidad, producto, bonificado"
+                                                                    actionListener="#{compraDetalleController.create(compraController.selected)}">
+                                                   </p:commandButton>                                       
+                                                </p:column>                                                
+                                            </p:row>
+                                        </p:panelGrid>
+                                            
+                                            
+                                        <p:dataTable var="m" value="#{compraController.compraDetalleOfSelected}"
+                                                     id="productosDT" scrollable="true" scrollWidth="98%" scrollHeight="295"
+                                                     emptyMessage="Sin resultados" reflow="true"
+                                                     editable="true">                                            
+                                            <p:column headerText="Producto" width="300" 
+                                                      filterBy="#{m.producto.codigo}" filterMatchMode="contains">
+                                                <p:outputLabel value="#{m.producto.codigo}"/>
+                                            </p:column>
+                                            <p:column headerText="Cantidad" width="50">
+                                                <p:outputLabel value="#{m.cantidad}"/>
+                                            </p:column>
+                                            <p:column headerText="Precio" filterMatchMode="contains"
+                                                      filterBy="#{m.precio}" >
+                                                <p:outputLabel value="#{m.precio}">
+                                                    <f:convertNumber currencySymbol="$" type="currency" locale="es_CO"/>
+                                                </p:outputLabel>
+                                            </p:column>
+                                            <p:column headerText="SubTotal">
+                                                <p:outputLabel value="#{m.precio * m.cantidad}">
+                                                    <f:convertNumber currencySymbol="$" type="currency" locale="es_CO"/>
+                                                </p:outputLabel>
+                                            </p:column>
+                                            <p:column headerText="Bonificado" width="60">
+                                                <p:selectBooleanCheckbox value="#{m.bonificado}" disabled="true">
+                                                </p:selectBooleanCheckbox>
+                                            </p:column>                                            
+                                            <p:column width="150">                                                                                                
+                                                <p:commandButton icon="fa fa-edit Fs16 white" title="Editar" 
+                                                            actionListener="#{compraDetalleController.setSelected(m)}"
+                                                            update=":#{p:component('productosDT')},:formEditarCompra:msgs, :#{p:component('agregarPrecioForm')},
+                                                                        :#{p:component('editarDetalleForm')}"
+                                                            process="@this"
+                                                            oncomplete="PF('editarDetalleDialogWidget').show();"> 
+                                                </p:commandButton>
+                                                 <p:commandButton icon="fa fa-dollar Fs16 white" title="Precios" 
+                                                             actionListener="#{productoPrecioController.setCompraDetalle(m)}"
+                                                            update=":#{p:component('productosDT')},:formEditarCompra:msgs, :#{p:component('agregarPrecioForm')}"
+                                                            process="@this"
+                                                            oncomplete="PF('agregarPrecioDialogWidget').show();"> 
+                                                </p:commandButton>
+                                                <p:commandButton icon="fa fa-remove Fs16 white" title="Eliminar" actionListener="#{compraDetalleController.delete(m)}"
+                                                            update=":#{p:component('productosDT')},:formEditarCompra:msgs, :formEditarCompra:totalLabel
+                                                            ,:#{p:component('panelTotals')}, :#{p:component('panelCantidad')}" 
+                                                            process=":#{p:component('productosDT')},:formEditarCompra:msgs"> 
+                                                    <p:confirm header="Confirmar" message="Esta seguro de eliminar el registro?" icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                            </p:column> 
+                                        </p:dataTable>
+                                    </p:tab>
+                                    <p:tab title="Rubros">
+                                        <p:panelGrid>
+                                            <p:row>
+                                                <p:column>
+                                                    <p:outputLabel value="Rubro:" for="rubro" />
+                                                </p:column>
+                                                <p:column>                                                    
+                                                    <p:selectOneMenu
+                                                        value="#{compraRubroController.newCompraRubro.rubro}" effect="fade"
+                                                        converter="RubroConverter" required="true" id="rubro"
+                                                        requiredMessage="Debe seleccionar un rubro"
+                                                        filter="true" filterMatchMode="contains">      
+                                                        <f:selectItem noSelectionOption="true" itemLabel="Seleccione..." />
+                                                        <f:selectItems value="#{rubroController.list}" var="z"
+                                                                       itemLabel="#{z.nombre}" itemValue="#{z}" />
+                                                    </p:selectOneMenu>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:outputLabel value="Valor:" for="valor"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <pe:inputNumber value="#{compraRubroController.newCompraRubro.valor}" required="true" id="valor"/>
+                                                </p:column>                                                                                                
+                                                <p:column>
+                                                    <p:commandButton icon="fa fa-save Fs16 white" title="Agregar" update=":#{p:component('rubrosDT')},:#{p:component('msgs')},
+                                                                     :#{p:component('panelTotals')},:#{p:component('panelCantidad')}, rubro, valor"   
+                                                                     process="@this rubro valor"
+                                                                     actionListener="#{compraRubroController.create(compraController.selected)}">
+                                                    </p:commandButton>
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                        <p:separator />
+                                        <p:dataTable var="m" value="#{compraController.compraRubroOfSelected}"
+                                                     id="rubrosDT" scrollable="true" scrollWidth="98%" scrollHeight="295"
+                                                     emptyMessage="Sin resultados" reflow="true">
+                                            <p:column headerText="Descripción" width="300">
+                                                <p:outputLabel value="#{m.rubro.nombre}"/>
+                                            </p:column>
+                                            <p:column headerText="Valor">
+                                                <p:outputLabel value="#{m.valor}">
+                                                    <f:convertNumber currencySymbol="$" type="currency" locale="es_CO"/>
+                                                </p:outputLabel>
+                                            </p:column>
+                                            <p:column headerText="Valor">
+                                                <p:outputLabel 
+                                                    value="#{m.valor / compraController.getProductosTotal(compraController.selected.id)}">
+                                                    <f:convertNumber type="percent" locale="es_CO"/>
+                                                </p:outputLabel>
+                                            </p:column>    
+                                            <p:column width="35">
+                                                <p:commandButton id="optionsButtonRubro" type="button" icon="fa fa-gear Fs16 white"/>
+                                                <p:menu overlay="true" trigger="optionsButtonRubro" my="left top" at="left bottom">
+                                                    
+                                                    <p:menuitem icon="fa fa-remove Fs16 white" title="Eliminar" actionListener="#{compraRubroController.delete(m)}"
+                                                                update=":#{p:component('rubrosDT')},:#{p:component('msgs')}, :#{p:component('totalLabel')}" 
+                                                                value="Eliminar" process="@this"> 
+                                                        <p:confirm header="Confirmar" message="Esta seguro de eliminar el registro?" icon="ui-icon-alert" />
+                                                    </p:menuitem>
+                                                </p:menu>
+                                            </p:column> 
+                                        </p:dataTable>
+                                    </p:tab>
+                                </p:tabView>  
+                                <div style="border: none !important; float: right;">
+                                    <p:panelGrid columns="2" id="panelTotals">  
+                                        <p:outputLabel value="SUBTOTAL PRODUCTOS:" styleClass="BigTopic"/>                                            
+                                        <p:outputLabel value="#{compraController.getProductosTotal(compraController.selected.id)}" id="totalProductos" >
+                                            <f:convertNumber currencySymbol="$" type="currency" locale="es_CO"/>
+                                        </p:outputLabel>
+                                            
+                                        <p:outputLabel value="SUBTOTAL RUBROS:" styleClass="BigTopic"/>                                            
+                                        <p:outputLabel value="#{compraController.getRubrosTotal(compraController.selected.id)}"
+                                                       id="totalRubros" style="color: red;">
+                                            <f:convertNumber currencySymbol="$" type="currency" locale="es_CO"/>
+                                        </p:outputLabel>
+                                        
+                                        <p:outputLabel value="IVA:" styleClass="BigTopic"/>   
+                                        <p:inplace id="iva" editor="true">
+                                            <p:ajax event="save" listener="#{compraController.update()}" 
+                                                    update=":formEditarCompra:msgs, :#{p:component('panelTotals')}"  />
+                                            <f:facet name="output">
+                                                <p:outputLabel value="#{compraController.selected.iva}"
+                                                       id="ivaLabel">
+                                                    <f:convertNumber currencySymbol="$" type="currency" locale="es_CO"/>
+                                                </p:outputLabel>
+                                            </f:facet>
+                                            <f:facet name="input">
+                                                <pe:inputNumber value="#{compraController.selected.iva}" 
+                                                                     required="true" id="ivaInput"/>
+                                            </f:facet>
+                                        </p:inplace>
+                                        
+                                        <p:outputLabel value="TOTAL COMPRA: " style="font-size: 18px !important"/>                                            
+                                        <p:outputLabel value="#{compraController.getCompraTotal(compraController.selected.id)}" id="totalLabel"
+                                                       style="font-size: 18px !important">
+                                            <f:convertNumber currencySymbol="$" type="currency" locale="es_CO"/>
+                                        </p:outputLabel>                      
+                                    </p:panelGrid>   
+                                </div>    
+                                    
+                                <div style="border: none !important; float: right;">
+                                    <p:panelGrid columns="2" id="panelCantidad">  
+                                        <p:outputLabel value="CANTIDAD PRODUCTOS:"/>                                            
+                                        <p:outputLabel value="#{compraController.getCantidadProductos(compraController.selected.id)}" >                                            
+                                        </p:outputLabel>                   
+                                    </p:panelGrid>   
+                                </div>  
+                            </h:form>
+                                                        
+                            <ui:include  src="precio.xhtml"/>
+                            <ui:include  src="editar-detalle.xhtml"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

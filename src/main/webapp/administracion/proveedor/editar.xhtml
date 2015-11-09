@@ -1,0 +1,30 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+     
+    <h:form id="updateProveedorForm">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />   
+        <p:dialog id="updateProveedorDialog" widgetVar="updateProveedorDialogWidget" modal="true" header="Proveedor">
+            <p:panelGrid columns="2">
+                <p:outputLabel value="Nombre:" for="proveedorNombre"/>
+                <p:inputText id="proveedorNombre" value="#{proveedorController.selected.nombre}" required="true" />
+                
+                <p:outputLabel value="Dirección:" for="proveedorDireccion"/>
+                <p:inputText id="proveedorDireccion" value="#{proveedorController.selected.direccion}" />
+                
+                <p:outputLabel value="Teléfono:" for="proveedorTelefono"/>
+                <p:inputText id="proveedorTelefono" value="#{proveedorController.selected.telefono}"/>
+                
+                <f:facet name="footer">
+                    <p:commandButton  value="Guardar"
+                            icon="fa fa-edit Fs16 white" update=":form:proveedoresDT, :form:msgs"
+                            oncomplete="handleRequest(xhr, status, args, 'updateProveedorDialogWidget')" actionListener="#{proveedorController.update()}">
+                    </p:commandButton>
+                </f:facet>
+            </p:panelGrid>
+        </p:dialog>
+    </h:form>
+    
+</ui:composition>

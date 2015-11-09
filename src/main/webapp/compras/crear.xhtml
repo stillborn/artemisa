@@ -1,0 +1,55 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+                    
+    <h:form id="createCompraForm">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />   
+        <p:dialog id="createCompraDialog" widgetVar="createCompraDialogWidget" modal="true" header="Compra">
+            <p:panelGrid>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="Fecha Compra:" for="compraFecha"/>
+                    </p:column>
+                    <p:column>
+                        <p:calendar value="#{compraController.newCompra.fechaCompra}" id="compraFecha"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="Proveedor:" for="proveedor"/>
+                    </p:column>
+                    <p:column>
+                        <p:selectOneMenu
+                            value="#{compraController.newCompra.proveedor}" effect="fade"
+                            converter="ProveedorConverter" required="true" id="proveedor"
+                            requiredMessage="La compra debe tener un proveedor"
+                            style="width:100px" filter="true" filterMatchMode="contains">                       
+                            <f:selectItems value="#{proveedorController.list}" var="m"
+                                           itemLabel="#{m.nombre}" itemValue="#{m}" />
+                        </p:selectOneMenu>
+                            
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="Número de Factura:" for="numeroFactura"/>
+                    </p:column>
+                    <p:column>
+                        <p:inputText value="#{compraController.newCompra.numeroFactura}" id="numeroFactura"/>
+                                        
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+               
+                <f:facet name="footer">
+                    <p:commandButton  value="Guardar"
+                                      icon="fa fa-edit Fs16 white" update=":form:comprasDT, :form:msgs"
+                                      oncomplete="handleRequest(xhr, status, args, 'createCompraDialogWidget')" actionListener="#{compraController.create()}">
+                    </p:commandButton>
+                </f:facet>
+        </p:dialog>
+    </h:form>
+        
+</ui:composition>

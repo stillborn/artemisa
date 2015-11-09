@@ -1,0 +1,87 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/layout/template.xhtml">
+                    
+    <ui:define name="content">
+        <div class="Container100">
+            <div class="ContainerIndent">
+                <div class="Card ShadowEffect  ">
+                    <div class="Container100">
+                        <div class="ContainerIndent">
+                            <h2 class="TexAlCenter BigTopic">Productos</h2>
+                                
+                            <h:form id="form"> 
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />   
+                                <p:growl id="msgs" showDetail="#{productoController.detail}"/>
+                                    
+                                <p:commandButton  value="Crear"
+                                                  icon="fa fa-plus Fs16 white" update=":createProductoForm:createProductoDialog"
+                                                  oncomplete="PF('createProductoDialogWidget').show()" >
+                                </p:commandButton>
+                                    
+                                <p:separator />
+                                    
+                                <p:dataTable id="productosDT" var="m" value="#{productoController.productoDataModel}" paginatorPosition="bottom"
+                                             rows="5" paginator="true" lazy="true"
+                                             rowsPerPageTemplate="5,10,15" emptyMessage="Sin resultados" reflow="true">
+                                    <p:column headerText="Tipo Producto" filterBy="#{m.tipoProducto.nombre}" filterMatchMode="contains">
+                                        <h:outputText value="#{m.tipoProducto.nombre}"/>
+                                    </p:column>                                
+                                    <p:column headerText="Marca" filterBy="#{m.marca.nombre}" filterMatchMode="contains">
+                                        <h:outputText value="#{m.marca.nombre}"/>
+                                    </p:column>
+                                    
+                                    <p:column headerText="Presentación" filterBy="#{m.presentacion.descripcion}" filterMatchMode="contains">
+                                        <h:outputText value="#{m.presentacion.descripcion}"/>
+                                    </p:column>
+                                    <p:column headerText="Descripción" filterBy="#{m.descripcion}" filterMatchMode="contains">
+                                        <h:outputText value="#{m.descripcion}"/>
+                                    </p:column>
+                                    
+                                    <p:column headerText="Unidades" style="width: 60px;">
+                                        <h:outputText value="#{m.unidades}"/>
+                                    </p:column>
+                                    <p:column width="90">
+                                        <p:commandButton icon="fa fa-eye Fs16 white" update=":form:imagePanel" 
+                                                         oncomplete="PF('imagePanelWidget').show('#{component.clientId}')">    
+                                            <f:setPropertyActionListener value="#{m}" target="#{productoController.selected}" />
+                                        </p:commandButton>   
+                                        <p:commandButton id="optionsButton" type="button" icon="fa fa-gear Fs16 white"/>
+                                        <p:menu overlay="true" trigger="optionsButton" my="left top" at="left bottom">
+                                            <p:menuitem  value="Editar"
+                                                         icon="fa fa-edit Fs16 white" update=":updateProductoForm:updateProductoDialog"
+                                                         oncomplete="PF('updateProductoDialogWidget').show()" >
+                                                <f:setPropertyActionListener value="#{m}" target="#{productoController.selected}" />
+                                            </p:menuitem>
+                                            <p:menuitem  value="Cargar Imagen"
+                                                         icon="fa fa-upload Fs16 white" update=":form:uploadImageDialog"
+                                                         oncomplete="PF('uploadImageDialogWidget').show()" >
+                                                <f:setPropertyActionListener value="#{m}" target="#{productoController.selected}" />
+                                            </p:menuitem>
+                                            <p:menuitem icon="fa fa-remove Fs16 white" value="Eliminar" actionListener="#{productoController.delete(m)}"
+                                                        update=":#{p:component('productosDT')},:form:msgs">
+                                                <p:confirm header="Confirmar" message="Esta seguro de eliminar el registro?" icon="ui-icon-alert" />
+                                            </p:menuitem>                                                                                     
+                                        </p:menu>
+                                    </p:column>
+                                </p:dataTable>                                
+                                <p:overlayPanel widgetVar="imagePanelWidget" hideEffect="fade" dynamic="true">
+                                    <h:graphicImage  id="imagePanel" name="#{appController.appUploadPath}/productos/#{productoController.selected.foto}"  width="300" />
+                                </p:overlayPanel>   
+                                    
+                                <ui:include src="cargar.xhtml"/>
+                            </h:form>
+                                
+                            <ui:include src="crear.xhtml"/>
+                            <ui:include src="editar.xhtml"/> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+        
+</ui:composition>

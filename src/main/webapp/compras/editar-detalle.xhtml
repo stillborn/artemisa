@@ -1,0 +1,49 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+                    
+    <h:form id="editarDetalleForm">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />   
+        <p:dialog id="editarDetalleDialog" widgetVar="editarDetalleDialogWidget" modal="true" header="Editar"
+                  width="780" resizable="false">
+            <p:panelGrid columns="8">
+                <p:outputLabel value="Producto" for="producto"/>
+                 <p:selectOneMenu
+                     value="#{compraDetalleController.selected.producto}" effect="fade"
+                    converter="ProductoConverter" required="true" id="producto"  
+                    requiredMessage="Debe tener un producto" style="width: 150px;"
+                    filter="true" filterMatchMode="contains"> 
+                    <f:selectItem noSelectionOption="true" itemLabel="Seleccione..." />
+                    <f:selectItems value="#{productoController.list}" 
+                                   var="p" itemLabel="#{p.codigo}" itemValue="#{p}" />
+                </p:selectOneMenu>
+                
+                <p:outputLabel value="Cantidad" for="cantidad"/>
+                <pe:inputNumber value="#{compraDetalleController.selected.cantidad}" 
+                                                styleClass="inputSmall"
+                                                required="true" id="cantidad"/> 
+                
+                <p:outputLabel value="Precio" for="precio"/>
+                <pe:inputNumber value="#{compraDetalleController.selected.precio}" 
+                                                styleClass="inputSmall"
+                                                required="true" id="precio"/> 
+                
+                <p:outputLabel value="Bonif.:" for="bonificado"/>                                          
+                <p:selectBooleanCheckbox value="#{compraDetalleController.selected.bonificado}"
+                                                                             id="bonificado"/>     
+            </p:panelGrid>
+            <f:facet name="footer">
+                <p:commandButton icon="fa fa-save Fs16 white" title="Actualizar"                                                                     
+                                update=":#{p:component('productosDT')},:formEditarCompra:msgs,:#{p:component('panelTotals')}
+                                ,:#{p:component('panelCantidad')}"  oncomplete="PF('editarDetalleDialogWidget').hide();"                              
+                                            actionListener="#{compraDetalleController.update()}">
+                                            
+               </p:commandButton>       
+            </f:facet>
+        </p:dialog>
+    </h:form>
+        
+</ui:composition>

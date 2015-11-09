@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+  <session-factory>
+    <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+    <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+    <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/artemisa?zeroDateTimeBehavior=convertToNull</property>
+    <property name="hibernate.connection.username">root</property>
+    <property name="hibernate.connection.password">spmt0518</property>
+    <mapping class="com.artemisa.generated.Presentacion"/>
+    <mapping class="com.artemisa.generated.Compra"/>
+    <mapping class="com.artemisa.generated.Proveedor"/>
+    <mapping class="com.artemisa.generated.ProductoPrecio"/>
+    <mapping class="com.artemisa.generated.CompraRubro"/>
+    <mapping class="com.artemisa.generated.Rubro"/>
+    <mapping class="com.artemisa.generated.Authority"/>
+    <mapping class="com.artemisa.generated.Marca"/>
+    <mapping class="com.artemisa.generated.Venta"/>
+    <mapping class="com.artemisa.generated.User"/>
+    <mapping class="com.artemisa.generated.CompraDetalle"/>
+    <mapping class="com.artemisa.generated.Producto"/>
+    <mapping class="com.artemisa.generated.Parametro"/>
+    <mapping class="com.artemisa.generated.TipoProducto"/>
+    <mapping class="com.artemisa.generated.Configuration"/>
+  </session-factory>
+</hibernate-configuration>

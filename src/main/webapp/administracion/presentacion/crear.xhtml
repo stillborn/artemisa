@@ -1,0 +1,25 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+     
+    <h:form id="createPresentacionForm">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />   
+        <p:dialog id="createPresentacionDialog" widgetVar="createPresentacionDialogWidget" modal="true" header="Presentacion">
+            <p:panelGrid columns="2">
+                
+                <p:outputLabel value="Descripcion:" for="presentacionDescripcion"/>
+                <p:inputText id="presentacionDescripcion" value="#{presentacionController.newPresentacion.descripcion}" required="true" />
+                
+                <f:facet name="footer">
+                    <p:commandButton  value="Guardar"
+                            icon="fa fa-edit Fs16 white" update=":form:presentacionesDT, :form:msgs"
+                            oncomplete="handleRequest(xhr, status, args, 'createPresentacionDialogWidget')" actionListener="#{presentacionController.create()}">
+                    </p:commandButton>
+                </f:facet>
+            </p:panelGrid>
+        </p:dialog>
+    </h:form>
+    
+</ui:composition>

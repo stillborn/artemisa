@@ -1,0 +1,15 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+                        
+        <p:dialog id="uploadImageDialog" widgetVar="uploadImageDialogWidget" modal="true" header="Cargar Imagen Producto">
+            <p:panelGrid columns="2">       
+                <p:fileUpload fileUploadListener="#{productoController.uploadProductoImage}" mode="advanced" dragDropSupport="false"
+                              sizeLimit="10000000" fileLimit="1" allowTypes="/(\.|\/)(|jpe?g|png)$/"/>
+                                                  
+            </p:panelGrid>
+        </p:dialog>    
+        
+</ui:composition>

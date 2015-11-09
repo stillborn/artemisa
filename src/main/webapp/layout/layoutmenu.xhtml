@@ -1,0 +1,42 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pr="http://primefaces.org/rio">
+        
+    <div class="Animated05" id="layout-menu-cover">
+        <ul class="layout-menu">                
+            <li>
+                <a class="menulink ripplelink">
+                    <i class="icon-round58 Fs40"></i>
+                    <span class="Fs18">${appController.authenticatedUser.name} ${appController.authenticatedUser.lastname}<i class="icon-downwards Fright Fs20"></i><br /><span class="Fs12 FontRobotoLight">Bienvenido!!</span></span>
+                </a>
+                <ul>                        
+                    <li>                        
+                        <form id="formLogout" action="/artemisa/logout" method='POST'>
+                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/> 
+                            <li><a href="#" onclick="document.getElementById('formLogout').submit(); return false" class="menulink ripplelink"><i class="icon-thermostat1 Fs16"></i> Logout</a></li>
+                        </form>
+                    </li>
+                </ul>
+            </li>            
+        </ul>
+        <div class="Separator"></div>
+        <h:form>                    
+            
+            <pr:menu>            
+                <p:submenu id="rm_theme" label="Administración" icon="icon-mountains14">
+                    <p:menuitem id="rm_marca" value="Marcas" icon="icon-browser" url="/administracion/marca/listar.xhtml" />
+                    <p:menuitem id="rm_presentacion" value="Presentaciones" icon="icon-calendar" url="/administracion/presentacion/listar.xhtml" />
+                    <p:menuitem id="rm_producto" value="Productos" icon="icon-grid-alt" url="/administracion/producto/listar.xhtml" />
+                    <p:menuitem id="rm_proveedor" value="Proveedores" icon="icon-screen47 Fs16" url="/administracion/proveedor/listar.xhtml" />
+                    <p:menuitem id="rm_tProducto" value="Tipo Producto" icon="icon-windows-1" url="/administracion/tipo-producto/listar.xhtml" />                    
+                </p:submenu>  
+                <p:menuitem id="rm_compras" value="Compras" icon="icon-planet29" url="/compras/listar.xhtml"/>
+                <p:menuitem id="rm_ventas" value="Ventas" icon="icon-automatic2" url="/ventas/listar.xhtml"/>
+            </pr:menu>
+        </h:form>
+    </div>
+</ui:composition>

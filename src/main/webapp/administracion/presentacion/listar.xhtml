@@ -1,0 +1,63 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/layout/template.xhtml">
+                    
+    <ui:define name="content">
+        <div class="Container100">
+            <div class="ContainerIndent">
+                <div class="Card ShadowEffect  ">
+                    <div class="Container100">
+                        <div class="ContainerIndent">
+                            <h2 class="TexAlCenter BigTopic">Presentaciones</h2>
+                                
+                            <h:form id="form"> 
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />   
+                                <p:growl id="msgs" showDetail="#{presentacionController.detail}"/>
+                                    
+                                <p:commandButton  value="Crear"
+                                                  icon="fa fa-plus Fs16 white" update=":createPresentacionForm:createPresentacionDialog"
+                                                  oncomplete="PF('createPresentacionDialogWidget').show()" >
+                                </p:commandButton>
+                                    
+                                <p:separator />
+                                    
+                                <p:dataTable id="presentacionesDT" var="m" value="#{presentacionController.list}" paginatorPosition="bottom"
+                                             rows="5" paginator="true" 
+                                             rowsPerPageTemplate="5,10,15" emptyMessage="Sin resultados" reflow="true">
+                                    <p:column headerText="Descripción" filterBy="#{m.descripcion}" filterMatchMode="contains">
+                                        <p:cellEditor>
+                                            <f:facet name="output">
+                                                <h:outputText value="#{m.descripcion}"/>
+                                            </f:facet>
+                                            <f:facet name="input">
+                                                <p:inputText value="#{m.descripcion}" style="width: 90%"/>
+                                            </f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column headerText="Acciones" width="100">
+                                        <p:commandButton  label="Editar"
+                                                          icon="fa fa-edit Fs16 white" update=":updatePresentacionForm:updatePresentacionDialog"
+                                                          oncomplete="PF('updatePresentacionDialogWidget').show()" >
+                                            <f:setPropertyActionListener value="#{m}" target="#{presentacionController.selected}" />
+                                        </p:commandButton>
+                                        <p:commandButton icon="fa fa-remove Fs16 white" alt="Eliminar" actionListener="#{presentacionController.delete(m)}"
+                                                         update=":form:presentacionesDT,:form:msgs">
+                                            <p:confirm header="Confirmar" message="Esta seguro de eliminar el registro?" icon="ui-icon-alert" />
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:form>
+                                
+                            <ui:include src="crear.xhtml"/>
+                            <ui:include src="editar.xhtml"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+        
+</ui:composition>

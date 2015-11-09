@@ -1,0 +1,57 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+                    
+    <h:form id="createProductoForm">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />   
+        <p:dialog id="createProductoDialog" widgetVar="createProductoDialogWidget" modal="true" header="Producto">
+            <p:panelGrid columns="4">                
+                <p:outputLabel value="Tipo Producto:" for="productoTipo"/>
+                <p:selectOneMenu
+                    value="#{productoController.newProducto.tipoProducto}" effect="fade"
+                    converter="TipoProductoConverter" required="true" id="productoTipo"
+                    requiredMessage="El producto debe tener un tipo"
+                    style="width:151px" filter="true" filterMatchMode="contains">                    
+                    <f:selectItems value="#{tipoProductoController.list}" var="obj"
+                                   itemLabel="#{obj.nombre}" itemValue="#{obj}" />
+                </p:selectOneMenu>
+                    
+                <p:outputLabel value="Marca:" for="productoMarca"/>
+                <p:selectOneMenu
+                    value="#{productoController.newProducto.marca}" effect="fade"
+                    converter="MarcaConverter" required="true" id="productoMarca"
+                    requiredMessage="El producto debe tener una marca"
+                    style="width:151px" filter="true" filterMatchMode="contains">
+                    <f:selectItems value="#{marcaController.list}" var="obj"
+                                   itemLabel="#{obj.nombre}" itemValue="#{obj}" />
+                </p:selectOneMenu>
+                    
+                <p:outputLabel value="Descripción:" for="productoDescripcion"/>
+                <p:inputText id="productoDescripcion" value="#{productoController.newProducto.descripcion}" required="true" style="width: 90%"/>
+                    
+                <p:outputLabel value="Presentación:" for="productoPresentacion"/>
+                <p:selectOneMenu
+                    value="#{productoController.newProducto.presentacion}" effect="fade"
+                    converter="PresentacionConverter" required="true" id="productoPresentacion"
+                    requiredMessage="El producto debe tener una presentación"
+                    style="width:151px" filter="true" filterMatchMode="contains">
+                    <f:selectItems value="#{presentacionController.list}" var="obj"
+                                   itemLabel="#{obj.descripcion}" itemValue="#{obj}" />
+                </p:selectOneMenu>
+                
+                <p:outputLabel value="Unidades" for="productoUnidades"/>
+                <p:inputText id="productoUnidades" value="#{productoController.newProducto.unidades}" 
+                             required="true" style="width: 90%"/>
+            </p:panelGrid>
+            <f:facet name="footer">
+                <p:commandButton  value="Guardar"
+                                  icon="fa fa-edit Fs16 white" update=":form:productosDT, :form:msgs"
+                                  oncomplete="handleRequest(xhr, status, args, 'createProductoDialogWidget')" actionListener="#{productoController.create()}">
+                </p:commandButton>
+            </f:facet>
+        </p:dialog>
+    </h:form>
+        
+</ui:composition>

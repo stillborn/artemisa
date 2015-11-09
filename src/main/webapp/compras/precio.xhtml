@@ -1,0 +1,53 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+                    
+    <h:form id="agregarPrecioForm">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />   
+        <p:dialog id="agregarPrecioDialog" widgetVar="agregarPrecioDialogWidget" modal="true" header="Precios"
+                  width="700">
+            <p:panelGrid>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="Valor:" for="valor"/>
+                    </p:column>
+                    <p:column>
+                        <pe:inputNumber value="#{productoPrecioController.precio}" required="true" id="valor"/>
+                    </p:column>
+                    <p:column>
+                        <p:commandButton title="Agregar Precio" icon="fa fa-plus Fs16 white" update="agregarPrecioForm"                                         
+                                         actionListener="#{productoPrecioController.create()}"/>
+                    </p:column>    
+                </p:row>
+            </p:panelGrid>
+            <p:dataTable id="preciosDT" var="m" value="#{productoPrecioController.getPrecios(productoPrecioController.compraDetalle.producto)}" 
+                            paginatorPosition="bottom" rows="5" paginator="true" 
+                            rowsPerPageTemplate="5,10,15" emptyMessage="Sin resultados" reflow="true">
+                <p:column headerText="Número Factura" style="width: 100px;">
+                    <p:outputLabel value="#{m.compraDetalle.compra.numeroFactura}"/>
+                </p:column>
+                <p:column headerText="Fecha Factura" style="width: 70px;">
+                    <p:outputLabel value="#{m.compraDetalle.compra.fechaCompra}"/>
+                </p:column>
+                <p:column headerText="Producto">
+                    <p:outputLabel value="#{m.compraDetalle.producto.codigo}"/>
+                </p:column>
+                <p:column headerText="Precio" style="width: 70px;"> 
+                    <p:outputLabel value="#{m.precio}">
+                        <f:convertNumber currencySymbol="$" type="currency" locale="es_CO"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column style="width: 60px;">
+                     <p:commandButton icon="fa fa-remove Fs16 white" title="Eliminar" actionListener="#{productoPrecioController.delete(m)}"
+                                update="preciosDT"> 
+                        <p:confirm header="Confirmar" message="Esta seguro de eliminar el registro?" icon="ui-icon-alert" />
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+        </p:dialog>
+    </h:form>
+        
+</ui:composition>

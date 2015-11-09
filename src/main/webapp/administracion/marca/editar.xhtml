@@ -1,0 +1,23 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+     
+    <h:form id="updateMarcaForm">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />   
+        <p:dialog id="updateMarcaDialog" widgetVar="updateMarcaDialogWidget" modal="true" header="Tipo de Producto">
+            <p:panelGrid columns="2">
+                <p:outputLabel value="Nombre:" for="marcaNombre"/>
+                <p:inputText id="marcaNombre" value="#{marcaController.selected.nombre}" required="true" />
+                <f:facet name="footer">
+                    <p:commandButton  value="Guardar"
+                            icon="fa fa-edit Fs16 white" update=":form:marcasDT, :form:msgs"
+                            oncomplete="handleRequest(xhr, status, args, 'updateMarcaDialogWidget')" actionListener="#{marcaController.update()}">
+                    </p:commandButton>
+                </f:facet>
+            </p:panelGrid>
+        </p:dialog>
+    </h:form>
+    
+</ui:composition>
